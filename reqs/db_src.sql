@@ -19,7 +19,7 @@ create table Catergoria
 create table Servico
 (
 	ID                   int primary key auto_increment,
-    id_Catergoria        int,
+    id_Catergoria        int not null,
     id_Dono              int,
     nome_estabelecimento varchar(256) not null,
     nome_dono_anonimo    varchar(256),

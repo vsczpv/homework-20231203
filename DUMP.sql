@@ -92,7 +92,7 @@ DROP TABLE IF EXISTS `Servico`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Servico` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `id_Catergoria` int(11) DEFAULT NULL,
+  `id_Catergoria` int(11) NOT NULL,
   `id_Dono` int(11) DEFAULT NULL,
   `nome_estabelecimento` varchar(256) NOT NULL,
   `nome_dono_anonimo` varchar(256) DEFAULT NULL,

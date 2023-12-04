@@ -211,18 +211,6 @@ namespace vin
 		private services_create_handler = (req: ex.Request, res: ex.Response): void =>
 		{
 
-			if
-				(
-					req.body.id_Catergoria   === undefined || req.body.nome_estabelecimento === undefined ||
-					req.body.local_bloco     === undefined || req.body.local_sala           === undefined
-				)
-			{
-				this.r_set_cors(res);
-				res.status(400);
-				res.end();
-				return;
-			}
-
 			if ( !(req.body.id_Dono || req.body.nome_dono_anonimo) )
 			{
 				this.r_set_cors(res);
@@ -239,25 +227,19 @@ namespace vin
 				return;
 			}
 
-			const has_val = req.body.horario_aberto    ? `"${req.body.horario_aberto}"`    : "NULL";
-			const hfs_val = req.body.horario_fechado   ? `"${req.body.horario_fechado}"`   : "NULL";
-			const hps_val = req.body.horario_pico      ? `"${req.body.horario_pico}"`      : "NULL";
+			let into_query: string = "";
+			let vals_query: string = "";
 
-			const idu_val = req.body.id_Dono           ?  `${req.body.id_Dono}`            : "NULL";
-			const nda_val = req.body.nome_dono_anonimo ? `"${req.body.nome_dono_anonimo}"` : "NULL";
+			for (let key in req.body) into_query +=  `${key},`;
+			for (let key in req.body) vals_query += `"${req.body[key]}",`;
 
-			this.db.query(`
-				INSERT INTO Servico(id_Catergoria, id_Dono, nome_dono_anonimo, nome_estabelecimento,
-									horario_aberto, horario_fechado, horario_pico, local_bloco, local_sala, local_complemento)
-				VALUES ("${req.body.id_Catergoria}",${idu_val},${nda_val},"${req.body.nome_estabelecimento}",
-						 ${has_val},${hfs_val},${hps_val},
-						"${req.body.local_bloco}","${req.body.local_sala}","${req.body.local_complemnto}")
-				`,
-			(_e: Error, _r: any, _i: any) => {
-				console.log(_e);
+			into_query = into_query.replace(/,+$/, "");
+			vals_query = vals_query.replace(/,+$/, "");
+
+			this.db.query(`INSERT INTO Servico(${into_query}) VALUES (${vals_query})`, (err: Error, r: any, _i: any) => {
 				this.r_set_cors(res);
-				res.status(201);
-				res.end();
+				if (err) res.status(400).send(err).end();
+				else     res.status(201).end();
 			});
 
 		}
@@ -338,7 +320,7 @@ namespace vin
 			into_query = into_query.replace(/,+$/, "");
 			vals_query = vals_query.replace(/,+$/, "");
 
-			this.db.query(`INSERT INTO Item(${into_query}) VALUES (${vals_query})`, (err: sql.MysqlError, r: any, _i: any) => {
+			this.db.query(`INSERT INTO Item(${into_query}) VALUES (${vals_query})`, (err: sql.MysqlError, _r: any, _i: any) => {
 				this.r_set_cors(res);
 				if (err)
 				{
@@ -355,7 +337,7 @@ namespace vin
 			this.db.query(`SELECT nome, tipo, preco FROM Item WHERE (ID = ${req.params.cid} && id_Servico = ${req.params.id})`,
 			(_e: Error, r: any, _i: any) => {
 				this.r_set_cors(res);
-				if (r.legnth === 0) res.status(404).end();
+				if (r.length === 0) res.status(404).end();
 				else                res.send(r);
 			})
 		}
