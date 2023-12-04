@@ -1,0 +1,41 @@
+﻿/users				create, read				V
+	READ:	ID, nome, email, is_admin
+	CREATE:	nome, email, is_admin, senha
+
+/users/:id			read, update, delete			V
+	READ:	nome, email, senha, is_admin
+	UPDATE: [nome],[email],[senha],[is_admin]
+	DELETE
+
+
+/services			create, read				V
+	READ:	ID, *nome_catergoria, *nome_dono, nome_estabelecimento
+	CREATE:	id_Catergoria, [id_Dono | nome_dono_anônimo], nome_estabelecimento, ha, hf, hp, lb, ls, lc
+
+/services/:id			read, update, delete			V
+	READ:	*,   -ID
+	UPDATE: [*], -ID
+	DELETE
+
+/users/:id/comments		read
+/users/:id/comments/:cid	read, update, delete
+/users/:id/contrib		read
+/users/:id/contrib/:cid		read, update, delete
+
+
+/services/:id/comments		create, read
+/services/:id/comments/:cid	read, update, delete
+/services/:id/contrib		create, read
+/services/:id/contrib/:cid	read, update, delete
+
+/catergory			create, read				V
+	READ:	ID, nome
+	CREATE:	nome
+/catergory/:id			read, update, delete			V
+	READ:	nome
+	UPDATE: [nome]
+	DELETE
+
+
+/services/:id/items		create, read
+/services/:id/items/:iid	read, update, delete
