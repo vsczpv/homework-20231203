@@ -51,6 +51,39 @@ INSERT INTO `Catergoria` VALUES
 UNLOCK TABLES;
 
 --
+-- Table structure for table `Item`
+--
+
+DROP TABLE IF EXISTS `Item`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Item` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `id_Servico` int(11) DEFAULT NULL,
+  `nome` varchar(256) DEFAULT NULL,
+  `tipo` varchar(256) DEFAULT NULL,
+  `preco` decimal(6,2) DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `id_Servico` (`id_Servico`),
+  CONSTRAINT `Item_ibfk_1` FOREIGN KEY (`id_Servico`) REFERENCES `Servico` (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Item`
+--
+
+LOCK TABLES `Item` WRITE;
+/*!40000 ALTER TABLE `Item` DISABLE KEYS */;
+INSERT INTO `Item` VALUES
+(1,1,'Sprite Zero 600ml','Bebida',6.00),
+(2,1,'Misto Quente','Lanche',15.00),
+(3,2,'Caderno Hello Kitty 250 folhas','Caderno',12.00),
+(8,4,'Vara Mágica','Ferramenta Mágica',55.90);
+/*!40000 ALTER TABLE `Item` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `Servico`
 --
 
@@ -131,4 +164,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-03 23:29:06
+-- Dump completed on 2023-12-04 16:20:46

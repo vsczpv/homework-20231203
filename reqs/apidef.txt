@@ -25,11 +25,15 @@
 	UPDATE: [nome]
 	DELETE
 
+/services/:id/items		create, read				V
+	READ:	ID, nome, tipo, preço
+	CREATE:	nome, tipo, preço
+/services/:id/items/:cid	read, update, delete
+	READ:	* -ID
+	UPDATE: [* -ID]
+	DELETE
 
 ------------------------------------------------------------------------------
-
-/services/:id/items		create, read
-/services/:id/items/:iid	read, update, delete
 
 
 /users/:id/comments		read

@@ -36,6 +36,17 @@ create table Servico
 	foreign key (id_Dono)             references Usuario(ID)
 );
 
+create table Item
+(
+	ID         int primary key auto_increment,
+	id_Servico int,
+	nome       varchar(256),
+	tipo       varchar(256),
+	preco      decimal(6,2),
+	
+	foreign key (id_Servico) references Servico(ID)
+);
+
 /*
 create table Contribuicao
 (
@@ -60,16 +71,4 @@ create table Comentario
 	foreign key (id_Usuario) references Usuario(ID),
 	foreign key (id_Servico) references Servico(ID)
 );
-
-create table Item
-(
-	ID         int primary key auto_increment,
-	id_Servico int,
-	nome       varchar(256),
-	tipo       varchar(256),
-	preco      decimal(6,2),
-	
-	foreign key (id_Servico) references Servico(ID)
-);
-
 */

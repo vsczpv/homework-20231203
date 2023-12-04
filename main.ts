@@ -311,36 +311,132 @@ namespace vin
 		}
 
 		/* END   /services[/:id]  */
+		/* BEGIN /services/:id/items[/:cid]  */
+
+		private services_id_items_list_handler = (req: ex.Request, res: ex.Response): void =>
+		{
+ 			this.db.query(`SELECT ID, nome, tipo, preco FROM Item WHERE (id_Servico = ${req.params.id})`, (err: Error, r: any , _i: any) => {
+				this.r_set_cors(res);
+				console.log(err, r, _i);
+				     if (err)            res.status(400).send(err).end();
+				else if (r.length === 0) res.status(404).send().end();
+				else                     res.send(r)    .end();
+			});
+		}
+
+		private services_id_items_create_handler = (req: ex.Request, res: ex.Response): void =>
+		{
+
+			req.body.id_Servico = req.params.id;
+
+			let into_query: string = "";
+			let vals_query: string = "";
+
+			for (let key in req.body) into_query +=  `${key},`;
+			for (let key in req.body) vals_query += `"${req.body[key]}",`;
+
+			into_query = into_query.replace(/,+$/, "");
+			vals_query = vals_query.replace(/,+$/, "");
+
+			this.db.query(`INSERT INTO Item(${into_query}) VALUES (${vals_query})`, (err: sql.MysqlError, r: any, _i: any) => {
+				this.r_set_cors(res);
+				if (err)
+				{
+					if (err.code == "ER_NO_REFERENCED_ROW_2") res.status(409).send(`NO_SERVICE "${req.body.id_Servico}"`).end();
+					else                                      res.status(400).send(err).end();
+				}
+				else     res.status(201).end();
+			});
+
+		}
+
+		private services_id_items_cid_read_handler = (req: ex.Request, res: ex.Response): void =>
+		{
+			this.db.query(`SELECT nome, tipo, preco FROM Item WHERE (ID = ${req.params.cid} && id_Servico = ${req.params.id})`,
+			(_e: Error, r: any, _i: any) => {
+				this.r_set_cors(res);
+				if (r.legnth === 0) res.status(404).end();
+				else                res.send(r);
+			})
+		}
+
+		private services_id_items_cid_update_handler = (req: ex.Request, res: ex.Response): void =>
+		{
+			let set_query = "";
+
+			this.r_set_cors(res);
+
+			for (let key in req.body)
+			{
+				if (key === "ID")
+				{
+					res.status(400).end(); return;
+				}
+				set_query += `${key} = "${req.body[key]}",`
+			}
+
+			set_query = set_query.replace(/,+$/, "");
+
+			if (set_query === "") { res.status(400).end(); return; }
+
+
+			this.db.query(`UPDATE Item SET ${set_query} WHERE (ID = ${req.params.cid} && id_Servico = ${req.params.id})`,
+			(err: Error, r: any, _i: any) => {
+				     if (err)                  res.status(400).send(err).end();
+				else if (r.affectedRows === 0) res.status(404).end();
+				else                           res.end();
+			});
+		}
+
+		private services_id_items_cid_delete_handler = (req: ex.Request, res: ex.Response): void =>
+		{
+			this.db.query(`DELETE FROM Item WHERE (ID = ${req.params.cid} && id_Servico = ${req.params.id})`,
+			(err: Error, r: any, _i) => {
+				this.r_set_cors(res);
+
+					 if (err)                  res.status(409).send(err).end(); // Conflict : Remoção invalida a DB
+				else if (r.affectedRows === 0) res.status(404).end();           // Not Found
+
+				res.end();
+			});
+		}
+
+		/* END   /services/:id/items[/:cid]  */
 
 		private get_handlers: { [key: string]: any } =
 		{
-			"/users":         this.users_list_handler,
-			"/users/:id":     this.users_id_read_handler,
-			"/catergory":     this.catergory_list_handler,
-			"/catergory/:id": this.catergory_id_read_handler,
-			"/services":      this.services_list_handler,
-			"/services/:id":  this.services_id_read_handler
+			"/users":                   this.users_list_handler,
+			"/users/:id":               this.users_id_read_handler,
+			"/catergory":               this.catergory_list_handler,
+			"/catergory/:id":           this.catergory_id_read_handler,
+			"/services":                this.services_list_handler,
+			"/services/:id":            this.services_id_read_handler,
+			"/services/:id/items":      this.services_id_items_list_handler,
+			"/services/:id/items/:cid": this.services_id_items_cid_read_handler
 		}
 
 		private post_handlers: { [key: string]: any } =
 		{
-			"/users":         this.users_create_handler,
-			"/catergory":     this.catergory_create_handler,
-			"/services":      this.services_create_handler
+			"/users":                   this.users_create_handler,
+			"/catergory":               this.catergory_create_handler,
+			"/services":                this.services_create_handler,
+			"/services/:id/items":      this.services_id_items_create_handler
 		}
 
 		private put_handlers: { [key: string]: any } =
 		{
-			"/users/:id":     this.users_id_update_handler,
-			"/catergory/:id": this.catergory_id_update_handler,
-			"/services/:id":  this.services_id_update_handler
+			"/users/:id":               this.users_id_update_handler,
+			"/catergory/:id":           this.catergory_id_update_handler,
+			"/services/:id":            this.services_id_update_handler,
+			"/services/:id/items/:cid": this.services_id_items_cid_update_handler
 		}
 
 		private delete_handlers: { [key: string]: any } =
 		{
-			"/users/:id":     this.users_id_delete_handler,
-			"/catergory/:id": this.catergory_id_delete_handler,
-			"/services/:id":  this.services_id_delete_handler
+			"/users/:id":               this.users_id_delete_handler,
+			"/catergory/:id":           this.catergory_id_delete_handler,
+			"/services/:id":            this.services_id_delete_handler,
+			"/services/:id/items/:cid": this.services_id_items_cid_delete_handler
 		}
 
 		constructor(port: number)
