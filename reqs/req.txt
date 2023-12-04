@@ -1,3 +1,0 @@
-﻿{
-	"nome_estabelecimento": "O Magistrado"
-}
